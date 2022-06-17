@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>영화 평점입력</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        body{
+            text-align: center;
+        }
+        table{
+            width: 300px;
+            margin-top:50px;
+            margin-left: calc(50% - 150px);
+        }
+    </style>
+</head>
+<body>
+    <img id="cat_img" src="{{ url_for('static', filename='cat.jpeg') }}"/>
+    <h1>재미있게 본 영화를 기록해 보아요~</h1>
+    <div>당신은 영화를 좋아하나요?! 보았던 영화들의 점수를 기록해보아요!!</div>
+    <br>
+    <div>영화 제목 : <input id="movie-title" type="text" style="margin-right:50px;"> 
+         점수 : <input id="movie-score" style="width:100px" type="number" >
+    <br>
+    <br>
+        <button onclick="saveBtn()">저장하기</button>
+        <button onclick="delBtn()" style="margin-left:20px;">목록 모두 제거하기</button>
+        </div>
+    <div>
+        <table id="movie-table">
+    
+        </table>    
+    </div>
+
+    <script>
+        $.ajax({
+            type:"GET",
+            url:"/practice",
+            data:{},
+            success: function(response){
+                console.log(response)
+                for (let movie of response){
+                    $("#movie-table").append(`
+                    <tr>
+                        <th>${movie.name}</th>
+                        <th>${movie.score}</th>
+                    </tr>
+                    `)
+                }
+            }
+        })
+        function saveBtn(){
+            const movieName = $("#movie-title").val()
+            const movieScore = $("#movie-score").val()
+            $.ajax({
+                type:"POST",
+                url:"/practice",
+                data:{
+                    'name':movieName,
+                    'score':movieScore
+                },
+                success: function(success){
+                    alert("저장완료!")
+                    location.reload()
+                }
+            })
+        }
+        function delBtn(){
+            $.ajax({
+                type:"DELETE",
+                url:"/practice",
+                data:{},
+                success: function(success){
+                    alert("삭제완료!")
+                    location.reload()
+                }
+            })
+        }
+    </script>
+</body>
+
+</html>
